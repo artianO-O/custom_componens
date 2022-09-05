@@ -37,7 +37,7 @@ const toplist = ['20px','120px','220px','320px']
     v-slot="{item,shoot}"
     :toplist="toplist"
   >
-    <div class="item" style="width:200px">
+    <div class="item">
       <div>{{item.text}}{{print(shoot)}}</div>
       <img :src="item.img" alt="">
     </div>
@@ -57,7 +57,7 @@ const toplist = ['20px','120px','220px','320px']
     overflow: hidden;
 }
 .item {
-  width: 600px;
+  width: 300px;
   height: 80px;
   background: red;
 }

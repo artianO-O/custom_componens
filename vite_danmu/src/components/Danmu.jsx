@@ -59,13 +59,17 @@ export default defineComponent({
             list.value.splice(currenIdx.value,0,item)
         }
     
-        onMounted(() => {
-            const slotObj = {list:list.value,index:currenIdx.value,item:list.value[currenIdx.value]}
-            const item = content.slots.default(slotObj)[0]  // 用户传入的子选项模版，可能需要更多的样式选项
+        const slotObj = {list:list.value,index:currenIdx.value,item:list.value[currenIdx.value]}
+        const item = content.slots.default(slotObj)[0]  // 用户传入的子选项模版，可能需要更多的样式选项
 
+        onMounted(() => {
+
+            danmuContain.value.style.position = 'relative'
+            console.log(item.el)
+            console.log(item.el.offsetWidth)
             // 起点与终点
             const start = `${danmuContain.value.offsetWidth}px`
-            const end = '-'+ (item.props.style.width || `${danmuContain.value.offsetWidth}px`)
+            const end = `-${item.el.offsetWidth}px`
     
             const initBullet = () => {
                 const slotObj = {list:list.value,index:currenIdx.value,item:list.value[currenIdx.value],shoot:shootMsg}
@@ -77,7 +81,6 @@ export default defineComponent({
                 const currentHeight = toplist.value[currentTopIdx]
                 // 装载属性
                 const style = {
-                    width: '200px',
                     position: 'absolute',
                     top: currentHeight,
                     [direction.value]: start,
@@ -159,10 +162,14 @@ export default defineComponent({
             shootMsg,
             danmuContain,
             nodeList,
-            shootTimes
+            shootTimes,
+            item
         }
     },
     render() {
-        return <div ref="danmuContain" class="danmu">{this.nodeList}</div>
+        return <div ref="danmuContain" class="danmu">
+            {this.nodeList}
+            <div style='visibility:hidden;position:absolute;z-index:1'>{this.item}</div>
+        </div>
     }
 })
