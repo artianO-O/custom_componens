@@ -29,6 +29,7 @@ const toplist = ['20px','120px','220px','320px']
 </script>
 
 <template>
+<div>
   <Danmu 
     ref="danmu" 
     :duration="5" 
@@ -44,6 +45,7 @@ const toplist = ['20px','120px','220px','320px']
   </Danmu>
   <input type="text" v-model="msg">
   <button @click="shoot(msg)">发射</button>
+</div>
 </template>
 
 <style scoped>

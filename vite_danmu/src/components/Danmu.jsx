@@ -1,4 +1,4 @@
-import { defineComponent,ref,toRefs,nextTick,getCurrentInstance,reactive,onMounted,onBeforeUnmount } from 'vue'
+import { defineComponent,ref,toRefs,nextTick,getCurrentInstance,reactive,onMounted,onBeforeUnmount,h } from 'vue'
 export default defineComponent({
     props: {
         list: Array,
@@ -38,19 +38,29 @@ export default defineComponent({
         cachenum: {
             type: Number,
             default: 10
+        },
+        offsetstart: {
+            type: Number,
+            default: 0
+        },
+        offsetend: {
+            type: Number,
+            default: 0
+        },
+        debug: {
+            type: Boolean,
+            default: false
         }
     },
     setup(props,content) {
-        const {duration,toplist,isRandom,direction,interval,timingfun,cachenum,shootnum} = toRefs(props)
+        const {duration,toplist,isRandom,direction,interval,timingfun,cachenum,shootnum,offsetstart,offsetend,debug} = toRefs(props)
         const directionEnum = ['left','right']
         const drt = directionEnum.includes(direction.value) ? direction.value : directionEnum[0]
-        const instance = getCurrentInstance();
         const { list } = toRefs(props)
         const cacheVnode = ref(null)
         const cacheIdx = ref(0)
         const nodeList = reactive([])
         let currenIdx = ref(0);
-        const danmuList = list[currenIdx.value]
         const shootTimes = ref(0)
 
         const danmuContain = ref(null)
@@ -63,13 +73,11 @@ export default defineComponent({
         const item = content.slots.default(slotObj)[0]  // 用户传入的子选项模版，可能需要更多的样式选项
 
         onMounted(() => {
-
             danmuContain.value.style.position = 'relative'
-            console.log(item.el)
-            console.log(item.el.offsetWidth)
+            danmuContain.value.style.overflow = 'hidden'
             // 起点与终点
-            const start = `${danmuContain.value.offsetWidth}px`
-            const end = `-${item.el.offsetWidth}px`
+            const start = `${danmuContain.value.offsetWidth + offsetstart.value}px`
+            const end = `-${item.el.offsetWidth + offsetend.value}px`
     
             const initBullet = () => {
                 const slotObj = {list:list.value,index:currenIdx.value,item:list.value[currenIdx.value],shoot:shootMsg}
@@ -109,11 +117,9 @@ export default defineComponent({
     
             // 页面中装载太多dom会导致页面卡顿，但是也不需要清理的太频繁。当nodelist长度大于50时进行清理
             const clear = () => {
-                // nodeList.shift()
                 if(cacheIdx.value == cachenum.value) {
                     cacheIdx.value = 0
                 }
-                
                 cacheVnode.value = nodeList[cacheIdx.value]
             }
 
@@ -133,20 +139,21 @@ export default defineComponent({
                 const item = initBullet()
                 setTimeout(() => {
                     shoot(item)
-                },10)
+                },100)
                 currenIdx.value++
                 shootTimes.value++
             }
 
-            for(let i = 0;i< shootnum.value;i++) {
-                schedule();
-            }
-            
-            const intervalId = setInterval(() => {
+            if(!debug.value) {
                 for(let i = 0;i< shootnum.value;i++) {
-                    schedule()
+                    schedule();
                 }
-            },interval.value * 1000)
+                const intervalId = setInterval(() => {
+                    for(let i = 0;i< shootnum.value;i++) {
+                        schedule()
+                    }
+                },interval.value * 1000)
+            }
 
 
             onBeforeUnmount(() => {
@@ -167,9 +174,15 @@ export default defineComponent({
         }
     },
     render() {
-        return <div ref="danmuContain" class="danmu">
-            {this.nodeList}
-            <div style='visibility:hidden;position:absolute;z-index:1'>{this.item}</div>
-        </div>
+        return h("div", {
+            ref: "danmuContain",
+            class: "danmu"
+          }, this.nodeList, h("div", {
+            style: this.debug ? 'position:absolute;top:0;left:0' : "visibility:hidden;position:absolute;z-index:1"
+          }, this.item))
+        // <div ref="danmuContain" class="danmu">
+        //     {this.nodeList}
+        //     <div style={this.debug ? 'position:absolute;top:0;left:0' : "visibility:hidden;position:absolute;z-index:1"}>{this.item}</div>
+        // </div>
     }
 })
