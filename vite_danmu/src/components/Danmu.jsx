@@ -43,7 +43,7 @@ export default defineComponent({
     setup(props,content) {
         const {duration,toplist,isRandom,direction,interval,timingfun,cachenum,shootnum} = toRefs(props)
         const directionEnum = ['left','right']
-        direction.value = directionEnum.includes(direction.value) ? direction.value : directionEnum[0]
+        const drt = directionEnum.includes(direction.value) ? direction.value : directionEnum[0]
         const instance = getCurrentInstance();
         const { list } = toRefs(props)
         const cacheVnode = ref(null)
@@ -83,7 +83,7 @@ export default defineComponent({
                 const style = {
                     position: 'absolute',
                     top: currentHeight,
-                    [direction.value]: start,
+                    [drt]: start,
                     'transition-property':'none'
                 }
                 // 保留用户的样式设定
@@ -104,7 +104,7 @@ export default defineComponent({
                 item.el.style['transition-property'] = 'left,right';
                 item.el.style['transition-duration'] = `${duration.value}s`;
                 item.el.style['transition-timing-function'] = timingfun.value;
-                item.el.style[direction.value] = end;
+                item.el.style[drt] = end;
             }
     
             // 页面中装载太多dom会导致页面卡顿，但是也不需要清理的太频繁。当nodelist长度大于50时进行清理
