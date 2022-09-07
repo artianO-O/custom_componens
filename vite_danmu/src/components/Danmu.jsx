@@ -148,7 +148,7 @@ export default defineComponent({
                 for(let i = 0;i< shootnum.value;i++) {
                     schedule();
                 }
-                const intervalId = setInterval(() => {
+                var intervalId = setInterval(() => {
                     for(let i = 0;i< shootnum.value;i++) {
                         schedule()
                     }
