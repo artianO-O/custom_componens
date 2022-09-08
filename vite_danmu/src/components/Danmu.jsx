@@ -132,7 +132,7 @@ export default defineComponent({
                 if(currenIdx.value == list.value.length) {
                     currenIdx.value = 0
                 }
-                if(shootTimes.value == 362880) {
+                if(shootTimes.value == list.value.length) { // 顺序播放
                     shootTimes.value = 0
                 }
                 // console.log('当前索引:',currenIdx.value)
@@ -174,15 +174,23 @@ export default defineComponent({
         }
     },
     render() {
-        return h("div", {
-            ref: "danmuContain",
-            class: "danmu"
-          }, this.nodeList, h("div", {
-            style: this.debug ? 'position:absolute;top:0;left:0' : "visibility:hidden;position:absolute;z-index:1"
-          }, this.item))
-        // <div ref="danmuContain" class="danmu">
-        //     {this.nodeList}
-        //     <div style={this.debug ? 'position:absolute;top:0;left:0' : "visibility:hidden;position:absolute;z-index:1"}>{this.item}</div>
-        // </div>
+        return  <div ref="danmuContain" class="danmu">
+            {this.nodeList}
+            <div style={this.debug ? 'position:absolute;top:0;left:0' : "visibility:hidden;position:absolute;z-index:1"}>{this.item}</div>
+        </div>
+        
+        // 兼容vue3.0与无jsx版本，
+        // h("div", {
+        //     ref: "danmuContain",
+        //     class: "danmu"
+        //   }, 
+        //   ...this.nodeList.map((item) => {
+        //     return h("div",{},item)
+        //   })
+        //   , h("div", {
+        //     style: this.debug ? 'position:absolute;top:0;left:0' : "visibility:hidden;position:absolute;z-index:1"
+        //   }, this.item))
+
+
     }
 })
